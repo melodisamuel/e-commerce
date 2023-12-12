@@ -100,5 +100,3 @@ exports.searchProducts = async (req, res, next) => {
     data: results,
   });
 };
-
-//
