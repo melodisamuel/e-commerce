@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "start:prod": "cross-env NODE_ENV=production nodemon server.js"
   },
   "keywords": [],
   "author": "Melody Samuel",
@@ -17,5 +18,8 @@
     "morgan": "^1.10.0",
     "nodemon": "^3.0.2",
     "validator": "^13.11.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
   }
 }

@@ -1,7 +1,9 @@
 const Cart = require("../models/cartModel");
 const AppError = require("../utils/appError");
+const catchAsync = require('../utils/catchAsync')
 
-exports.createCart = async (req, res, next) => {
+
+exports.createCart = catchAsync(async (req, res, next) => {
   try {
     const newCart = await Cart.create(req.body);
     res.status(201).json({
@@ -11,9 +13,9 @@ exports.createCart = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+});
 
-exports.getCartHistory = async (req, res, next) => {
+exports.getCartHistory = catchAsync(async (req, res, next) => {
   const carts = await Cart.find();
   res.status(200).json({
     message: "success",
@@ -22,9 +24,9 @@ exports.getCartHistory = async (req, res, next) => {
       carts,
     },
   });
-};
+});
 
-exports.getCart = async (req, res, next) => {
+exports.getCart = catchAsync(async (req, res, next) => {
   const cart = await Cart.findById(req.params.id);
   res.status(200).json({
     status: "success",
@@ -32,9 +34,9 @@ exports.getCart = async (req, res, next) => {
       cart,
     },
   });
-};
+});
 
-exports.updateCart = async (req, res, next) => {
+exports.updateCart = catchAsync(async (req, res, next) => {
   const cart = await Cart.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
   });
@@ -47,9 +49,9 @@ exports.updateCart = async (req, res, next) => {
       cart,
     },
   });
-};
+});
 
-exports.deleteCart = async (req, res, next) => {
+exports.deleteCart = catchAsync(async (req, res, next) => {
   const cart = await Cart.findByIdAndDelete(req.params.id);
   if (!cart) {
     next(new AppError("No cart found with that ID", 404));
@@ -58,4 +60,4 @@ exports.deleteCart = async (req, res, next) => {
     status: "success",
     data: null,
   });
-};
+});

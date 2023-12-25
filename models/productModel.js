@@ -13,7 +13,10 @@ const productSchema = new mongoose.Schema(
     },
     size: {
       type: String,
-      enum: ["Men", "Women", "kids"],
+      enum: {
+        values: ["Men", "Women", "kids"],
+        message: 'size is either: Men, Women, Kids'
+      },
       required: [true, "A size category is required"],
     },
     releaseYear: {
@@ -26,12 +29,13 @@ const productSchema = new mongoose.Schema(
     },
     rating: {
       type: Number,
-      min: 1,
-      max: 5,
+      min: [1, 'Rating must be above 1.0'],
+      max: [5, 'Rating must be below 5.0'],
     },
   },
   {
     timestamps: true,
+    select: false
   }
 );
 

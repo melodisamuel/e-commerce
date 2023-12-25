@@ -3,6 +3,9 @@ const productController = require("./../Controllers/productController");
 
 const router = express.Router();
 
+router.route('/cheap-products').get
+  (productController.aliasCheapProducts, productController.getAllProducts)
+
 router.route("/search").get(productController.searchProducts);
 
 router

@@ -2,9 +2,18 @@ const { query } = require("express");
 const AppError = require("../utils/appError");
 // const Order = require("../models/orderModel");
 const Product = require("./../models/productModel");
+const APIFeatures = require('../utils/apiFeatures')
+const catchAsync = require('../utils/catchAsync')
 
-exports.createProduct = async (req, res, next) => {
-  try {
+exports.aliasCheapProducts = catchAsync(async  (req, res, next) => {
+  req.query.limit = '5';
+  req.query.sort = '-ratingsAverage.price';
+  req.query.fields = 'name,price,ratingsAverage,size';
+  next()
+});
+
+
+exports.createProduct = catchAsync(async (req, res, next) => {
     const newProduct = await Product.create(req.body);
     res.status(201).json({
       status: "success",
@@ -12,35 +21,20 @@ exports.createProduct = async (req, res, next) => {
         product: newProduct,
       },
     });
-  } catch (error) {
-    next(error);
-  }
-};
+});
 
-exports.getAllProducts = async (req, res, next) => {
-  // 1. FIltering
-  const queryObj = { ...req.query };
-  const excludeFields = ["page", "sort", "limit", "fields"];
-  excludeFields.forEach((el) => delete queryObj[el]);
+exports.getAllProducts = catchAsync(async (req, res, next) => {
 
-  // . Advanced filtering
-  let queryStr = JSON.stringify(queryObj);
-  queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
-  console.log(JSON.parse(queryStr));
+  // EXECUTE QUERY 
+  const features = new APIFeatures(Product.find(), req.query)
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
 
-  let query = Product.find(queryObj);
+  const products = await features.query
 
-  // 2. sorting
-  if (req.query.sort) {
-    const sortBy = req.query.sort.split(",").join(" ");
-    console.log(sortBy);
-    query = query.sort(sortBy);
-    // sort('price')
-  } else {
-    query = query.sort("-createdAt");
-  }
-
-  const products = await query;
+// Send response
   res.status(200).json({
     status: "success",
     results: products.length,
@@ -48,9 +42,9 @@ exports.getAllProducts = async (req, res, next) => {
       products,
     },
   });
-};
+});
 
-exports.getProduct = async (req, res, next) => {
+exports.getProduct = catchAsync(async (req, res, next) => {
   const product = await Product.findById(req.params.id);
   res.status(200).json({
     status: "success",
@@ -58,14 +52,15 @@ exports.getProduct = async (req, res, next) => {
       product,
     },
   });
-};
+});
 
-exports.updateProduct = async (req, res, next) => {
+exports.updateProduct = catchAsync(async (req, res, next) => {
   const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
+    runValidators: true,
   });
   if (!product) {
-    next(new AppError("No product found with that ID", "404"));
+    next(new AppError("No product found with that ID", 404));
   }
   res.status(200).json({
     status: "success",
@@ -73,20 +68,20 @@ exports.updateProduct = async (req, res, next) => {
       product,
     },
   });
-};
+});
 
-exports.deleteProduct = async (req, res, next) => {
+exports.deleteProduct = catchAsync(async (req, res, next) => {
   const product = await Product.findByIdAndDelete(req.params.id);
   if (!product) {
-    next(new AppError("No product found with that ID", "404"));
+    next(new AppError("No product found with that ID", 404));
   }
   res.status(200).json({
     status: "success",
     data: null,
   });
-};
+});
 
-exports.searchProducts = async (req, res, next) => {
+exports.searchProducts = catchAsync(async (req, res, next) => {
   const { keywords } = req.query;
   const results = await Product.find({
     $or: [
@@ -99,4 +94,5 @@ exports.searchProducts = async (req, res, next) => {
     results: results.length,
     data: results,
   });
-};
+});
+
