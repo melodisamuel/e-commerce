@@ -16,7 +16,7 @@ router
 
 router
   .route("/:id")
-  .delete(productController.deleteProduct)
+  .delete(authController.protect, authController.restrictTo('admin', 'support'), productController.deleteProduct)
   .patch(productController.updateProduct)
   .get(productController.getProduct);
 
