@@ -1,5 +1,6 @@
 const express = require("express");
 const orderController = require("../Controllers/orderController");
+const authController = require("../Controllers/authController")
 
 const router = express.Router();
 
@@ -10,7 +11,7 @@ router
 
 router
   .route("/:id")
-  .delete(orderController.deleteOrder)
+  .delete(authController.protect, authController.restrictTo('admin', 'support'),orderController.deleteOrder)
   .patch(orderController.updateOrder)
   .get(orderController.getOrder);
 

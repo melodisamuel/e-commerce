@@ -1,5 +1,6 @@
 const express = require("express");
 const cartController = require("../Controllers/cartController");
+const authController = require('../Controllers/authController')
 
 const router = express.Router();
 
@@ -10,7 +11,7 @@ router
 
 router
   .route("/:id")
-  .delete(cartController.deleteCart)
+  .delete(authController.protect, authController.restrictTo('admin', 'support'),cartController.deleteCart)
   .patch(cartController.updateCart)
   .get(cartController.getCart);
 
