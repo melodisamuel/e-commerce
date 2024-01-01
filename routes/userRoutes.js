@@ -10,7 +10,9 @@ router.route('/login').post(authController.login)
 router.route('/forgotPassword').post(authController.forgotPassword)
 router.route('/resetPassword/:token').patch(authController.resetPassword)
 
-router.route('/updateMyPassword').patch(authController.protect,authController.updatePassword)
+router.route('/updateMyPassword').patch(authController.protect, authController.updatePassword)
+
+router.route('/updateMe').patch(authController.protect,userController.updateMe)
 
 router
   .route("/")
@@ -20,7 +22,7 @@ router
 router
   .route("/:id")
   .delete(userController.deleteUser)
-  .patch(userController.updateUser)
+  // .patch(userController.updateUser)
   .get(userController.getUser);
 
 module.exports = router;
