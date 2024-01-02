@@ -78,13 +78,13 @@ exports.getUser = catchAsync(async (req, res, next) => {
 //   });
 // })
 
-exports.deleteUser = catchAsync(async (req, res, next) => {
-  const user = await User.findByIdAndDelete(req.params.id);
+exports.deleteMe = catchAsync(async (req, res, next) => {
+  const user = await User.findByIdAndUpdate(req.user.id, { active: false});
 
   if (!user) {
     return next(new AppError("No user found with that ID", 404));
   }
-  res.status(200).json({
+  res.status(204).json({
     status: "success",
     data: null,
   });
