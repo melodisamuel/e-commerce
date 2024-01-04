@@ -23,7 +23,7 @@ router
 router
   .route("/:id")
   // .delete(userController.deleteMe)
-  // .patch(userController.updateUser)
+  .patch(userController.updateUser)
   .get(userController.getUser);
 
 module.exports = router;
