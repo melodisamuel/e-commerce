@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const morgan = require("morgan");
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+const mongoSanitize = require('xss-clean')
 
 
 const AppError = require("./utils/appError");
@@ -34,7 +35,14 @@ app.use('/api', limiter)
 // Middlwares
 app.use(morgan("dev"));
 
+// Body parser reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));
+
+// Data sanitization against Nosql query injection
+app.use(mongoSanitize());
+
+// Data sanitization against xss
+app.use(xss())
 
 //Test middleware
 app.use((req, res, next) => {
