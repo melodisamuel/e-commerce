@@ -5,7 +5,7 @@ const morgan = require("morgan");
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const mongoSanitize = require('xss-clean')
-
+const hpp = require('hpp');
 
 const AppError = require("./utils/appError");
 const globalErrorHandler = require("./Controllers/errorController");
@@ -43,6 +43,11 @@ app.use(mongoSanitize());
 
 // Data sanitization against xss
 app.use(xss())
+
+// Prevent paramter pollution
+app.use(hpp({
+  whitelist: ['model', 'colorway', 'size', 'releaseYear', 'price', 'rating', 'createdAt', 'updatedAt']
+}));
 
 //Test middleware
 app.use((req, res, next) => {
